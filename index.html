@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link href='https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons' rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <!-- versão de desenvolvimento, inclui aviso úteis no console  -->
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <link href="https://unpkg.com/vuetify/dist/vuetify.min.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-beta/css/materialize.min.css">
+    <!-- Axios -->
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <title>Consult movie</title>
+</head>
+<body>
+
+    <div class="container">
+
+    <!-- 
+        <div id="app-3" class="center-align">
+            <h3 v-if="exist">{{ main_message }}</h3>
+            <h4 v-if="exist">{{ info_message }}</h4>
+        </div>
+
+        <div id="app-5">
+            <table class="highlight">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th v-for="skill in skills">{{ skill }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="person in persons">
+                        <td>{{ person.class }}</td>
+                        <td v-for="value in person.values">{{ value }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    -->
+
+        <!-- <div id="result">
+            <table class="highlight">
+                <tbody>
+                    <tr v-for="r in results.Opinion">
+                        <td>{{ r.section }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div> -->
+
+        <div id="api_movie">
+            <form>
+                <input type="text" v-model="movie">
+                <button @click.prevent="realizarConsulta()">Procurar</button>
+            </form>
+
+            <v-app id="inspire">
+                <div class="text-xs-center">
+
+                    <div class="row">
+                        <div class="col s12" v-for="r in results">
+                            <h4 class="header">{{ r.display_title }}</h4>
+                            <div class="card horizontal">
+                                <div class="card-image">
+                                    <span v-if="r.multimedia !== null"><img v-bind:src="r.multimedia.src"></span>
+                                    <span v-else><img src="http://placehold.it/210x140?text=N/A"></span>
+                                </div>
+                                <div class="card-stacked">
+                                    <div class="card-content">
+                                        <p>{{ r.headline }}<br>{{ r.summary_short }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- <v-pagination :length="pages" v-model="page"></v-pagination> -->
+                </div>
+            </v-app>
+
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/vuetify/dist/vuetify.js"></script>
+    <script>
+
+        // new Vue({
+        //     el: '#app-3',
+        //     data:{
+        //         exist: true,
+        //         main_message: 'The Elder Scrolls',
+        //         info_message: 'Initial Skills by Class'
+        //     }
+        // });
+
+        new Vue({
+            el: '#api_movie',
+            data: {
+                results: '',
+                movie: '',
+                page: '',
+            },
+            computed: {
+                pages () {
+                    return 4
+                }
+            },
+            methods: {
+                realizarConsulta(){
+                    var query = this.movie;
+                    var query = query.replace(" ", "+");
+                    axios.get("https://api.nytimes.com/svc/movies/v2/reviews/search.json?query="+query+"&order=by-title&api-key=fd0c1f21fa044584aeebe5021fb79874").then( response => {this.results = response.data.results})
+                },
+                setPage(){
+                    console.log("sdf");
+                }
+            }
+        });
+
+        // new Vue({
+        //     el: '#app-5',
+        //     data:{
+        //         persons: [
+        //             { values: [15, 15, 15, 20, 10, 15], class: 'Altmer'   },
+        //             { values: [25, 10, 15, 10, 15, 15], class: 'Argonian' },
+        //             { values: [15, 10, 25, 30, 20, 15], class: 'Bosmer'   }
+        //         ],
+        //         skills: [ 'Conjuration', 'Lockpicking', 'Two-Handed', 'One-Handed', 'Light Armor', 'Destruction' ]
+        //     }
+        // });
+
+    </script>
+</body>
+</html>
